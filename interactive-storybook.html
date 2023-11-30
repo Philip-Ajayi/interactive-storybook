@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>AngularJS Interactive Storybook</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <script src="script.js"></script>
+</head>
+<body>
+  <h1>Interactive Storybook</h1>
+  <div ng-controller="storyCtrl">
+    <h2>{{ currentStory.title }}</h2>
+    <p>{{ currentStory.content }}</p>
+    <br>
+    <button ng-click="goToNextStep()">Continue</button>
+  </div>
+
+  <script>
+    var app = angular.module('myApp', []);
+
+    app.controller('storyCtrl', function($scope) {
+      $scope.stories = [
+        {
+          title: 'The Enchanted Forest',
+          content: 'You find yourself standing at the edge of a mystical forest. The trees are tall and ancient, their branches reaching out like gnarled fingers. A faint glow emanates from within the woods, beckoning you closer.',
+          choices: [
+            {
+              text: 'Enter the forest',
+              nextStory: 1
+            },
+            {
+              text: 'Turn back',
+              nextStory: null
+            }
+          ]
+        },
+        {
+          title: 'The Forest Path',
+          content: 'You step into the forest, the cool air enveloping you like a cloak. The trees tower above, their leaves casting long shadows on the path beneath. As you venture deeper, you come across a fork in the road.',
+          choices: [
+            {
+              text: 'Follow the left path',
+              nextStory: 2
+            },
+            {
+              text: 'Follow the right path',
+              nextStory: 3
+            }
+          ]
+        },
+        {
+          title: 'The Hidden Glade',
+          content: 'You follow the left path, the forest growing denser with each step. The air becomes still and silent, the only sound the crunch of your leaves beneath your feet. Suddenly, you stumble upon a hidden glade, bathed in an ethereal light.',
+          choices: [
+            {
+              text: 'Explore the glade',
+              nextStory: null
+            },
+            {
+              text: 'Leave the glade and continue on your journey',
+              nextStory: 4
+            }
+          ]
+        },
+        {
+          title: 'The Crystal Cavern',
+          content: 'You follow the right path, the forest gradually thinning out. The sun filters through the trees, casting dappled patterns on the ground. In the distance, you spot a shimmering light, growing brighter as you approach.',
+          choices: [
+            {
+              text: 'Investigate the light',
+              nextStory: 5
+            },
+            {
+              text: 'Turn back and rejoin the left path',
+              nextStory: 2
+            }
+          ]
+        },
+        {
+          title: 'The Forest's Secret',
+          content: 'You approach the source of the light, finding yourself before a hidden cavern. Stepping inside, you discover a vast underground chamber, its walls encrusted with sparkling crystals. In the center of the cavern, a pool of water glows with an otherworldly light.',
+          choices: [
+            {
+              text: 'Examine the pool of water',
+              nextStory: null
+            },
+            {
+              text: 'Leave the cavern and continue your journey',
+              nextStory: 6
+            }
+          ]
+        },
+        {
+          title: 'The Forest's Heart',
+          content: 'Gazing into the pool of water, you see a vision of the forest itself, its ancient trees teeming with life. A sense of peace washes over you as you realize the forest is not just a place of mystery, but also a place of harmony and balance.',
+          choices: []
+        },
+        {
+          title: 'The Forest's End',
+          content: 'Continuing on your journey, you eventually find your way back to the edge of the forest. As you step out into the sunlight, you feel a renewed sense of wonder and appreciation for the natural world.',
+          choices: []
+        }
+      ];
+
+      $scope.currentStory = $scope.stories[0];
+$scope.goToNextStep = function() {
+    if ($scope.currentStory.choices) {
+        var selectedChoice = $scope.currentStory.choices.filter(function(choice) {
+            return choice.text === $scope.selectedChoice;
+        })[0];
+        if (selectedChoice) {
+            $scope.currentStory = $scope.stories[selectedChoice.nextStory];
+        }
+    } else {
+        alert('Game Over!');
+    }
+};
+});
+
+app.directive('myStory', function() {
+    return {
+        restrict: 'E',
+        scope: {
+            story: '='
+        },
+        template: '<div ng-if="story.choices">' +
+                    '<p>{{ story.content }}</p>' +
+                    '<button ng-repeat="choice in story.choices" ng-click="goToNextStep(choice.nextStory)">{{ choice.text }}</button>' +
+                  '</div>' +
+                  '<p ng-if="!story.choices">{{ story.content }}</p>',
+        controller: 'storyCtrl',
+        controllerAs: 'storyCtrl'
+    };
+});
+</script>
+</body>
+</html>
+      
